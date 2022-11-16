@@ -20,12 +20,20 @@ module.exports = function (passport) {
     })
   );
 
-  passport.serializeUser((user, cb) => {
-    cb(null, user.id);
+  passport.serializeUser(function (user, done) {
+    done(null, user.id);
   });
-  passport.deserializeUser((id, cb) => {
-    Admin.findOne({ _id: id }, (err, user) => {
-      cb(err, user);
-    });
+
+  passport.deserializeUser(async (id, done) => {
+    console.log('deserialize');
+    Admin.findById(id)
+      .then((user) => {
+        console.log(user);
+        done(null, user);
+      })
+      .catch((err) => {
+        console.error(err);
+        done(err);
+      });
   });
 };

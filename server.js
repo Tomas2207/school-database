@@ -7,33 +7,57 @@ const app = express();
 
 const cors = require('cors');
 
+const session = require('cookie-session');
 const passport = require('passport');
 const passportLocal = require('passport-local').Strategy;
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcryptjs');
-const expressSession = require('express-session');
 const Admin = require('./models/admin');
 
 const bodyParser = require('body-parser');
 
 //Middleware
+
 app.use(
   cors({
-    origin: 'http://localhost:3000', //where react app is hosted
+    origin: 'https://school-database-front.onrender.com', //where react app is hosted
     credentials: true,
   })
 );
+
+app.enable('trust proxy');
+
+app.use(function (req, res, next) {
+  res.header(
+    'Access-Control-Allow-Origin',
+    'https://school-database-front.onrender.com'
+  );
+  res.header('Access-Control-Allow-Credentials', true);
+  res.header(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept'
+  );
+  next();
+});
+
+app.use(cookieParser(process.env.SESSION_SECRET));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
-  expressSession({
+  session({
     secret: process.env.SESSION_SECRET,
     resave: true,
     saveUninitialized: true,
+    rolling: 'true',
+    cookie: {
+      maxAge: 60 * 1000 * 30,
+      secure: 'auto',
+      httpOnly: true,
+      sameSite: 'none',
+    },
   })
 );
 
-app.use(cookieParser(process.env.SESSION_SECRET));
 app.use(passport.initialize());
 app.use(passport.session());
 require('./passportConfig')(passport);
@@ -85,7 +109,9 @@ app.post('/register', async (req, res) => {
     res.json({ message: 'El Usuario Ya Existe' });
   }
 });
+
 app.get('/user', (req, res) => {
+  console.log('req.user', req.user);
   res.json(req.user);
 });
 
@@ -108,7 +134,6 @@ const studentRouter = require('./routes/students');
 const assignmentRouter = require('./routes/assignments');
 const signRouter = require('./routes/sign');
 const gradesRouter = require('./routes/grades');
-const { session } = require('passport');
 
 app.use('/teacher', teachersRouter);
 app.use('/course', courseRouter);
