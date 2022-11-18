@@ -21,13 +21,17 @@ module.exports = function (passport) {
   );
 
   passport.serializeUser(function (user, done) {
-    done(null, user.id);
+    console.log('*** serializeUser called, user: ');
+    console.log(user); // the whole raw user object!
+    console.log('---------');
+    done(null, { _id: user._id });
   });
 
   passport.deserializeUser(async (id, done) => {
     console.log('deserialize');
     Admin.findById(id)
       .then((user) => {
+        console.log('***deserialize user, user: ');
         console.log(user);
         done(null, user);
       })

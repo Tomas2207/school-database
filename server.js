@@ -20,41 +20,32 @@ const bodyParser = require('body-parser');
 
 app.use(
   cors({
-    origin: 'https://school-database-front.onrender.com', //where react app is hosted
+    origin: 'https://school-database.netlify.app', //where react app is hosted
     credentials: true,
   })
 );
 
-app.enable('trust proxy');
-
-app.use(function (req, res, next) {
-  res.header(
-    'Access-Control-Allow-Origin',
-    'https://school-database-front.onrender.com'
-  );
-  res.header('Access-Control-Allow-Credentials', true);
-  res.header(
-    'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept'
-  );
-  next();
-});
-
 app.use(cookieParser(process.env.SESSION_SECRET));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.set('trust proxy', 1);
 app.use(
+  // session({
+  //   secret: process.env.SESSION_SECRET,
+  //   resave: true,
+  //   saveUninitialized: false,
+  //   cookie: {
+  //     maxAge: 60 * 1000 * 30,
+  //     sameSite: 'none',
+  //   },
+  // })
   session({
-    secret: process.env.SESSION_SECRET,
-    resave: true,
-    saveUninitialized: true,
-    rolling: 'true',
-    cookie: {
-      maxAge: 60 * 1000 * 30,
-      secure: 'auto',
-      httpOnly: true,
-      sameSite: 'none',
-    },
+    name: '__session',
+    keys: ['key1'],
+    maxAge: 24 * 60 * 60 * 100,
+    secure: true,
+    httpOnly: true,
+    sameSite: 'none',
   })
 );
 
@@ -116,14 +107,14 @@ app.get('/user', (req, res) => {
 });
 
 app.get('/log-out', (req, res, next) => {
-  {
-    req.logout(function (err) {
-      if (err) {
-        return next(err);
-      }
-      res.json('Succesfully logged out');
-    });
+  try {
+    req.logout();
+    delete req.session;
+    delete req.user;
+  } catch (error) {
+    res.json({ message: error.message });
   }
+  res.json('Succesfully logged out');
 });
 
 //routes
