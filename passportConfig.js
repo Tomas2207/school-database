@@ -21,8 +21,8 @@ module.exports = function (passport) {
   );
 
   passport.serializeUser(function (user, done) {
-    console.log('*** serializeUser called, user: ');
-    console.log(user); // the whole raw user object!
+    console.log('----serializeUser, user: ');
+    console.log(user);
     console.log('---------');
     done(null, { _id: user._id });
   });
@@ -31,8 +31,9 @@ module.exports = function (passport) {
     console.log('deserialize');
     Admin.findById(id)
       .then((user) => {
-        console.log('***deserialize user, user: ');
+        console.log('----deserialize user, user: ');
         console.log(user);
+        console.log('---------');
         done(null, user);
       })
       .catch((err) => {

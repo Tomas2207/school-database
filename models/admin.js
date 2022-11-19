@@ -9,6 +9,14 @@ const adminSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  name: {
+    type: String,
+    required: true,
+  },
+  lastname: {
+    type: String,
+    required: true,
+  },
 });
 
 module.exports = mongoose.model('Admin', adminSchema);

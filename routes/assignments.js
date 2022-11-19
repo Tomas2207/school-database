@@ -40,12 +40,7 @@ router.post('/', async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 
-  // if (findAssignment.length == 0) {
-
-  // } else {
-  //   console.log('ada', findAssignment);
-  //   res.json({ message: 'Assignment already exists' });
-  // }
+  
 });
 
 //Update One

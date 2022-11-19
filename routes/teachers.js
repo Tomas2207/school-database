@@ -4,9 +4,9 @@ const router = express.Router();
 const Teacher = require('../models/teacher');
 
 //Get all
-router.get('/', async (req, res) => {
+router.get('/admin/:id', async (req, res) => {
   try {
-    const teachers = await Teacher.find();
+    const teachers = await Teacher.find({ admin: req.params.id });
     res.json(teachers);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -23,6 +23,7 @@ router.post('/', async (req, res) => {
   const teacher = new Teacher({
     name: req.body.name,
     lastname: req.body.lastname,
+    admin: req.body.admin,
   });
   try {
     const newTeacher = await teacher.save();

@@ -17,6 +17,10 @@ const courseSchema = mongoose.Schema({
     type: Number,
     required: true,
   },
+  admin: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+  },
 });
 
 module.exports = mongoose.model('Course', courseSchema);

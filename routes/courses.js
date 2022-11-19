@@ -5,9 +5,9 @@ const Student = require('../models/student');
 const Assignment = require('../models/assignment');
 
 //Get all
-router.get('/', async (req, res) => {
+router.get('/admin/:id', async (req, res) => {
   try {
-    const courses = await Course.find();
+    const courses = await Course.find({ admin: req.params.id });
     res.json(courses);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -26,6 +26,7 @@ router.post('/', async (req, res) => {
     year: req.body.year,
     division: req.body.division,
     schoolYear: req.body.schoolYear,
+    admin: req.body.admin,
   });
   try {
     const newCourse = await course.save();
@@ -37,18 +38,18 @@ router.post('/', async (req, res) => {
 
 //update all
 
-router.patch('/', async (req, res) => {
+router.patch('/admin/:id', async (req, res) => {
   let Courses;
   try {
     Courses = await Course.updateMany(
-      { year: { $lt: 6 } },
+      { $and: [{ year: { $lt: 6 } }, { admin: req.params.id }] },
       {
         $inc: { year: 1, schoolYear: 1 },
       }
     );
     await Course.findOneAndUpdate(
       {
-        $and: [{ year: 6 }, { level: 'PRIMARIA' }],
+        $and: [{ year: 6 }, { level: 'PRIMARIA' }, { admin: req.params.id }],
       },
       {
         year: 1,

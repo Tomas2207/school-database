@@ -30,15 +30,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set('trust proxy', 1);
 app.use(
-  // session({
-  //   secret: process.env.SESSION_SECRET,
-  //   resave: true,
-  //   saveUninitialized: false,
-  //   cookie: {
-  //     maxAge: 60 * 1000 * 30,
-  //     sameSite: 'none',
-  //   },
-  // })
   session({
     name: '__session',
     keys: ['key1'],
@@ -93,6 +84,8 @@ app.post('/register', async (req, res) => {
     const newAdmin = new Admin({
       username: req.body.username,
       password: hashedPassword,
+      name: req.body.name,
+      lastname: req.body.lastname,
     });
     res.json({ message: 'Nuevo Administrador creado' });
     await newAdmin.save();
